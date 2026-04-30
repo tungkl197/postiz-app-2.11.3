@@ -1,4 +1,4 @@
-import { IsDefined, IsOptional, IsString } from 'class-validator';
+import { IsDefined, IsOptional, IsString, Validate } from 'class-validator';
 import { ValidUrlExtension } from '@gitroom/helpers/utils/valid.url.path';
 
 

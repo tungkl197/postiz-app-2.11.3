@@ -4,7 +4,16 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Install build‑time dependencies
-RUN apk add --no-cache g++ make py3-pip
+RUN apk add --no-cache g++ make py3-pip libc6-compat
+
+# Declare ARGs that might be needed during build (especially for Next.js)
+ARG NEXT_PUBLIC_BACKEND_URL
+ARG FRONTEND_URL
+ARG NEXT_PUBLIC_VERSION
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV FRONTEND_URL=$FRONTEND_URL
+ENV NEXT_PUBLIC_VERSION=$NEXT_PUBLIC_VERSION
+ENV NODE_ENV=production
 
 # Install pnpm globally
 RUN npm i -g pnpm@10.6.1
@@ -13,8 +22,13 @@ RUN npm i -g pnpm@10.6.1
 COPY . .
 
 # Install all dependencies and build the monorepo
-RUN pnpm install --frozen-lockfile
-RUN pnpm run build
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost/dummy" pnpm install --frozen-lockfile
+
+# Generate Prisma Client
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost/dummy" pnpm run prisma-generate
+
+# Build the monorepo with increased memory for Next.js
+RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
 
 # -----------------------------------------------------------------------------
 # Runtime stage

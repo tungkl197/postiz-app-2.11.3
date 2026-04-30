@@ -289,7 +289,7 @@
     "jest-environment-node": "^29.4.1",
     "jest-junit": "^16.0.0",
     "jest-mock-extended": "^4.0.0-beta1",
-    "jsdom": "~22.1.0",
+    "jsdom": "~25.0.1",
     "nodemon": "^3.1.9",
     "postcss": "8.4.38",
     "prettier": "^2.6.2",

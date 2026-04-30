@@ -27,6 +27,7 @@ import {
 import { VideoDto } from '@gitroom/nestjs-libraries/dtos/videos/video.dto';
 import { VideoFunctionDto } from '@gitroom/nestjs-libraries/dtos/videos/video.function.dto';
 import { UploadDto } from '@gitroom/nestjs-libraries/dtos/media/upload.dto';
+import { InsertToPostizDto } from '@gitroom/nestjs-libraries/dtos/media/insert.to.postiz.dto';
 import axios from 'axios';
 import { Readable } from 'stream';
 import { lookup } from 'mime-types';
@@ -60,6 +61,19 @@ export class PublicIntegrationsController {
       getFile.originalname,
       getFile.path
     );
+  }
+
+  @Post('/insert-to-postiz')
+  async insertToPostiz(
+    @GetOrgFromRequest() org: Organization,
+    @Body() body: InsertToPostizDto
+  ) {
+    Sentry.metrics.count('public_api-request', 1);
+
+    const fileName =
+      body.name || body.r2_url.split('/').pop() || 'uploaded-file';
+
+    return this._mediaService.saveFile(org.id, fileName, body.r2_url);
   }
 
   @Post('/upload-from-url')

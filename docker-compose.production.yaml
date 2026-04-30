@@ -1,0 +1,144 @@
+# Use this for production.
+# Refer to configuration variables: http://docs.postiz.com/configuration/reference
+
+services:
+  postiz-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: postiz-app
+    restart: always
+    ports:
+      - "5000:5000"
+    env_file: .env
+    environment:
+      # === Required Settings
+      DATABASE_URL: "postgresql://postiz-user:postiz-password@postiz-postgres:5432/postiz-db-prod"
+      REDIS_URL: "redis://postiz-redis:6379"
+      JWT_SECRET: "ipnTXS2v5zbSSQLIFN0lBv51SY/A2yfFzjqeiqGvvKU="
+      # === URLs
+      FRONTEND_URL: "http://localhost:5000"
+      NEXT_PUBLIC_BACKEND_URL: "http://localhost:5000/api"
+      BACKEND_INTERNAL_URL: "http://localhost:3000"
+      # === Cloudflare
+      CLOUDFLARE_ACCOUNT_ID: "e2dde6326cd766566e74599cccc8a26f"
+      CLOUDFLARE_ACCESS_KEY: "d88045c793238bc6eb448f1c35c03829"
+      CLOUDFLARE_SECRET_ACCESS_KEY: "da2cf2bb1941ba28d041f6664ffee2c330a95c291da5ea013e688b4e339bb60e"
+      CLOUDFLARE_BUCKETNAME: "file-uploads"
+      CLOUDFLARE_BUCKET_URL: "https://pub-cbb465323027427aaa0b567307e23c74.r2.dev"
+      CLOUDFLARE_REGION: "auto"
+
+      # === Storage
+      STORAGE_PROVIDER: "cloudflare"
+      UPLOAD_DIRECTORY: "/uploads"
+      NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY: "/uploads"
+      # === Email (Resend)
+      RESEND_API_KEY: ""
+      EMAIL_FROM_ADDRESS: ""
+      EMAIL_FROM_NAME: ""
+      DISABLE_REGISTRATION: "false"
+      # === Social Media API Settings
+      X_API_KEY: ""
+      X_API_SECRET: ""
+      LINKEDIN_CLIENT_ID: ""
+      LINKEDIN_CLIENT_SECRET: ""
+      REDDIT_CLIENT_ID: ""
+      REDDIT_CLIENT_SECRET: ""
+      GITHUB_CLIENT_ID: ""
+      GITHUB_CLIENT_SECRET: ""
+      BEEHIIVE_API_KEY: ""
+      BEEHIIVE_PUBLICATION_ID: ""
+      LISTMONK_DOMAIN: ""
+      LISTMONK_USER: ""
+      LISTMONK_API_KEY: ""
+      LISTMONK_LIST_ID: ""
+      THREADS_APP_ID: ""
+      THREADS_APP_SECRET: ""
+      FACEBOOK_APP_ID: ""
+      FACEBOOK_APP_SECRET: ""
+      YOUTUBE_CLIENT_ID: ""
+      YOUTUBE_CLIENT_SECRET: ""
+      TIKTOK_CLIENT_ID: ""
+      TIKTOK_CLIENT_SECRET: ""
+      PINTEREST_CLIENT_ID: ""
+      PINTEREST_CLIENT_SECRET: ""
+      DRIBBBLE_CLIENT_ID: ""
+      DRIBBBLE_CLIENT_SECRET: ""
+      DISCORD_CLIENT_ID: ""
+      DISCORD_CLIENT_SECRET: ""
+      DISCORD_BOT_TOKEN_ID: ""
+      SLACK_ID: ""
+      SLACK_SECRET: ""
+      SLACK_SIGNING_SECRET: ""
+      MASTODON_URL: "https://mastodon.social"
+      MASTODON_CLIENT_ID: ""
+      MASTODON_CLIENT_SECRET: ""
+      # === Misc Settings
+      OPENAI_API_KEY: ""
+      NEXT_PUBLIC_DISCORD_SUPPORT: ""
+      NEXT_PUBLIC_POLOTNO: ""
+      API_LIMIT: "30"
+      # === Payment Settings
+      FEE_AMOUNT: "0.05"
+      STRIPE_PUBLISHABLE_KEY: ""
+      STRIPE_SECRET_KEY: ""
+      STRIPE_SIGNING_KEY: ""
+      STRIPE_SIGNING_KEY_CONNECT: ""
+      # === Developer Settings
+      NX_ADD_PLUGINS: "false"
+      IS_GENERAL: "true"
+      NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME: "Authentik"
+      NEXT_PUBLIC_POSTIZ_OAUTH_LOGO_URL: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/master/png/authentik.png"
+      POSTIZ_GENERIC_OAUTH: "false"
+      POSTIZ_OAUTH_URL: ""
+      POSTIZ_OAUTH_AUTH_URL: ""
+      POSTIZ_OAUTH_TOKEN_URL: ""
+      POSTIZ_OAUTH_USERINFO_URL: ""
+      POSTIZ_OAUTH_CLIENT_ID: ""
+      POSTIZ_OAUTH_CLIENT_SECRET: ""
+      # === Short Link Service Settings
+      DUB_TOKEN: ""
+      DUB_API_ENDPOINT: ""
+      DUB_SHORT_LINK_DOMAIN: ""
+      SHORT_IO_SECRET_KEY: ""
+      KUTT_API_KEY: ""
+      KUTT_API_ENDPOINT: ""
+      KUTT_SHORT_LINK_DOMAIN: ""
+      LINK_DRIP_API_KEY: ""
+      LINK_DRIP_API_ENDPOINT: ""
+      LINK_DRIP_SHORT_LINK_DOMAIN: ""
+    depends_on:
+      - postiz-postgres
+      - postiz-redis
+    networks:
+      - postiz-network
+
+  postiz-postgres:
+    # ref: https://hub.docker.com/_/postgres
+    image: postgres:17-alpine
+    container_name: postiz-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postiz-user
+      POSTGRES_PASSWORD: postiz-password
+      POSTGRES_DB: postiz-db-prod
+    volumes:
+      - postiz-postgres-data:/var/lib/postgresql/data
+    networks:
+      - postiz-network
+
+  postiz-redis:
+    # ref: https://hub.docker.com/_/redis
+    image: redis:7-alpine
+    container_name: postiz-redis
+    restart: always
+    networks:
+      - postiz-network
+
+volumes:
+  postiz-postgres-data:
+    # Ensure this is preserved and backed up for production
+
+networks:
+  postiz-network:
+    driver: bridge

@@ -13,7 +13,7 @@ services:
       - traefik.http.middlewares.postiz-buffering.buffering.memRequestBodyBytes=104857600
       - traefik.http.routers.postiz.middlewares=postiz-buffering
     environment:
-      - 'SERVICE_URL_POSTIZ=http://postiz.xttsvoiceai.fun'
+      - 'SERVICE_URL_POSTIZ=https://postiz.xttsvoiceai.fun'
       - 'SERVICE_PASSWORD_JWTSECRET=4O1zgEmng7Sa7WvyrEWItyKtwELwhbE7'
       - 'SERVICE_FQDN_POSTIZ=postiz.xttsvoiceai.fun'
       - 'SERVICE_PASSWORD_POSTGRESQL=Z9cfKHxl1ekuZUnyYVGR398Irv6aHYMP'
